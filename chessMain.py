@@ -3,8 +3,6 @@ Main file for handling user input and displaying current GameState
 '''
 
 import pygame as p
-import sys
-sys.path.insert(1,"C:\\Users\\milan\\OneDrive\\Documents\\GitHub\\chessEngine\\chessEngine.py")
 import chessEngine
 
 p.init()
