@@ -62,12 +62,16 @@ def main():
                         moveMade = True
                     sqSelected = ()
                     playerClicks = []
-                    print(move.getChessNotation(gs))
+                    if moveMade == True:
+                        print(move.getChessNotation(gs))
             #KEY HANDLER
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z: # Undo when z is pressed
-                    gs.undoMove()
-                    moveMade = True
+                    if gs.moveLog != []:
+                        gs.undoMove()
+                        moveMade = True
+                    else:
+                        pass
         if moveMade:
             validMoves = gs.getValidMoves()
             moveMade = False

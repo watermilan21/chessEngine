@@ -21,6 +21,9 @@ class GameState():
             ['wp','wp','wp','wp','wp','wp','wp','wp'],
             ['wR','wN','wB','wQ','wK','wB','wN','wR']
         ]
+        self.moveFunctions = {'p': self.getPawnMoves, 'R': self.getRookMoves, 'N': self.getKnightMoves,
+                            'B': self.getBishopMoves, 'Q': self.getQueenMoves, 'K': self.getKingMoves}
+    
         self.whitetoMove = True
         self.moveLog = []
     '''
@@ -48,27 +51,67 @@ class GameState():
     All moves without considering checks
     '''
     def getAllPossibleMoves(self):
-        moves = [Move((6,4),(4,4), self.board)]
+        moves = []
         for r in range(len(self.board)):
             for c in range(len(self.board)):
                 turn = self.board[r][c][0]
                 piece = self.board[r][c][1]
-                if (turn == 'w' and self.whitetoMove) and (turn == 'b' and not self.whitetoMove):
-                    if piece == 'p':
-                        self.getPawnMoves(r, c, moves)
-                    elif piece == 'R':
-                        self.getRookMoves(r, c, moves)
+                if (turn == 'w' and self.whitetoMove) or (turn == 'b' and not self.whitetoMove):
+                    self.moveFunctions[piece](r,c, moves)
         return moves
 
     '''
     Used to get all available PAWN moves.
     '''
     def getPawnMoves(self, r, c, moves):
-        pass
+        if self.whitetoMove:
+            if self.board[r-1][c] == "--":
+                moves.append(Move((r,c), (r-1,c), self.board))
+                if self.board[r-2][c] == "--" and r == 6:
+                    moves.append(Move((r,c), (r-2,c), self.board))
+            if c-1 >= 0:
+                if self.board[r-1][c-1][0] == "b":
+                    moves.append(Move((r,c), (r-1,c-1), self.board))
+            if c+1 <= 7:
+                if self.board[r-1][c+1][0] == "b":
+                    moves.append(Move((r,c), (r-1,c+1), self.board))
+
+        if not self.whitetoMove:
+            if self.board[r+1][c] == "--":
+                moves.append(Move((r,c), (r+1,c), self.board))
+                if self.board[r+2][c] == "--" and r == 1:
+                    moves.append(Move((r,c), (r+2,c), self.board))
+            if c-1 >= 0:
+                if self.board[r+1][c-1][0] == "w":
+                    moves.append(Move((r,c), (r+1,c-1), self.board))
+            if c+1 <= 7:
+                if self.board[r+1][c+1][0] == "w":
+                    moves.append(Move((r,c), (r+1,c+1), self.board))
     '''
     Used to get all ROOK moves.
     '''
     def getRookMoves(self, r, c, moves):
+        if self.whitetoMove:
+            pass
+    '''
+    Used to get all KNIGHT moves.
+    '''
+    def getKnightMoves(self, r, c, moves):
+        pass
+    '''
+    Used to get all BISHOP moves.
+    '''
+    def getBishopMoves(self, r, c, moves):
+        pass
+    '''
+    Used to get all QUEEN moves.
+    '''
+    def getQueenMoves(self, r, c, moves):
+        pass
+    '''
+    Used to get all KING moves.
+    '''
+    def getKingMoves(self, r, c, moves):
         pass
 
 
