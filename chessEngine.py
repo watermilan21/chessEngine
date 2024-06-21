@@ -91,24 +91,23 @@ class GameState():
     Used to get all ROOK moves.
     '''
     def getRookMoves(self, r, c, moves):
-        if self.whitetoMove:
-            directions = ((-1,0),(1,0),(0,-1),(0,1))
-            enemyColor = "b" if self.whitetoMove else "w"
-            for d in directions:
-                for i in range(1,8):
-                    endRow = r + d[0] * i
-                    endCol = c + d[1] * i
-                    if 0 <= endRow < 8 and 0 <= endCol < 8:
-                        endPiece = self.board[endRow][endCol]
-                        if endPiece == "--":
-                            moves.append(Move((r,c),(endRow,endCol),self.board))
-                        elif endPiece[0] == enemyColor:
-                            moves.append(Move((r,c),(endRow,endCol),self.board))
-                            break
-                        else:
-                            break
+        directions = ((-1,0),(1,0),(0,-1),(0,1))
+        enemyColor = "b" if self.whitetoMove else "w"
+        for d in directions:
+            for i in range(1,8):
+                endRow = r + d[0] * i
+                endCol = c + d[1] * i
+                if 0 <= endRow < 8 and 0 <= endCol < 8:
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece == "--":
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                    elif endPiece[0] == enemyColor:
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                        break
                     else:
                         break
+                else:
+                    break
     '''
     Used to get all KNIGHT moves.
     '''
@@ -117,7 +116,7 @@ class GameState():
         allyColor = "w" if self.whitetoMove else "b"
         for m in knightMoves:
             endRow = r + m[0]
-            endCol = r + m[1]
+            endCol = c + m[1]
             if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
@@ -126,24 +125,23 @@ class GameState():
     Used to get all BISHOP moves.
     '''
     def getBishopMoves(self, r, c, moves):
-        if self.whitetoMove:
-            directions = ((-1,1),(1,1),(-1,-1),(-1,1))
-            enemyColor = "b" if self.whitetoMove else "w"
-            for d in directions:
-                for i in range(1,8):
-                    endRow = r + d[0] * i
-                    endCol = c + d[1] * i
-                    if 0 <= endRow < 8 and 0 <= endCol < 8:
-                        endPiece = self.board[endRow][endCol]
-                        if endPiece == "--":
-                            moves.append(Move((r,c),(endRow,endCol),self.board))
-                        elif endPiece[0] == enemyColor:
-                            moves.append(Move((r,c),(endRow,endCol),self.board))
-                            break
-                        else:
-                            break
+        directions = ((-1,1),(1,1),(-1,-1),(-1,1))
+        enemyColor = "b" if self.whitetoMove else "w"
+        for d in directions:
+            for i in range(1,8):
+                endRow = r + d[0] * i
+                endCol = c + d[1] * i
+                if 0 <= endRow < 8 and 0 <= endCol < 8:
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece == "--":
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                    elif endPiece[0] == enemyColor:
+                        moves.append(Move((r,c),(endRow,endCol),self.board))
+                        break
                     else:
                         break
+                else:
+                    break
     '''
     Used to get all QUEEN moves.
     '''
