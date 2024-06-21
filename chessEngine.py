@@ -125,7 +125,7 @@ class GameState():
     Used to get all BISHOP moves.
     '''
     def getBishopMoves(self, r, c, moves):
-        directions = ((-1,1),(1,1),(-1,-1),(-1,1))
+        directions = ((-1,-1),(-1,1),(1,-1),(1,1))
         enemyColor = "b" if self.whitetoMove else "w"
         for d in directions:
             for i in range(1,8):
