@@ -26,6 +26,10 @@ class GameState():
     
         self.whitetoMove = True
         self.moveLog = []
+        self.whiteKingLoc = (7,4)
+        self.blackKingLoc = (0,4)
+        self.checkMate = False
+        self.staleMate = False
     '''
     Takes input as a move and executes it directly (Doesn't work for en passant, castling or pawn promotion)
     '''
@@ -34,18 +38,58 @@ class GameState():
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move) # Log Move to show log or undo feature
         self.whitetoMove = not self.whitetoMove
+        if move.pieceMoved == "wK":
+            self.whiteKingLoc = (move.endRow, move.endCol)
+        if move.pieceMoved == "bK":
+            self.blackKingLoc = (move.endRow, move.endCol)
 
     def undoMove(self):
         move = self.moveLog.pop()
         self.board[move.startRow][move.startCol] = move.pieceMoved
         self.board[move.endRow][move.endCol] = move.pieceCaptured
         self.whitetoMove = not self.whitetoMove
+        if move.pieceMoved == "wK":
+            self.whiteKingLoc = (move.startRow, move.startCol)
+        if move.pieceMoved == "bK":
+            self.blackKingLoc = (move.startRow, move.startCol)
 
     '''
     All moves considering checks
     '''
     def getValidMoves(self):
-        return self.getAllPossibleMoves() # Not worrying about checks right now.
+        moves = self.getAllPossibleMoves()
+        for i in range(len(moves)-1, -1, -1): # Iterate backwards to prevent bugs
+            self.makeMove(moves[i])
+            self.whitetoMove = not self.whitetoMove
+            if self.inCheck():
+                moves.remove(moves[i])
+                print("Illegal Move")
+            self.whitetoMove = not self.whitetoMove
+            self.undoMove()
+        if len(moves) == 0:
+            if self.inCheck():
+                self.checkMate = True
+            else:
+                self.staleMate = True
+        else:
+            self.checkMate = False
+            self.staleMate = False
+
+        return moves
+    
+    def inCheck(self):
+        if self.whitetoMove:
+            return self.squareUnderAttack(self.whiteKingLoc[0],self.whiteKingLoc[1])
+        else:
+            return self.squareUnderAttack(self.blackKingLoc[0],self.blackKingLoc[1])
+
+    def squareUnderAttack(self, r, c):
+        self.whitetoMove = not self.whitetoMove
+        oppMoves = self.getAllPossibleMoves()
+        self.whitetoMove = not self.whitetoMove
+        for move in oppMoves:
+            if move.endRow == r and move.endCol == c:
+                return True
 
     '''
     All moves without considering checks
