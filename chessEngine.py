@@ -30,6 +30,7 @@ class GameState():
         self.blackKingLoc = (0,4)
         self.checkMate = False
         self.staleMate = False
+        self.enPassantPossible = () # Coordinates where En Passant is possible
     '''
     Takes input as a move and executes it directly (Doesn't work for en passant, castling or pawn promotion)
     '''
@@ -43,6 +44,20 @@ class GameState():
         if move.pieceMoved == "bK":
             self.blackKingLoc = (move.endRow, move.endCol)
 
+        # Pawn Promotion
+        if move.isPawnPromotion:
+            self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
+
+        # EnPassant Move
+        if move.isEnpassantMove:
+            self.board[move.startRow][move.startCol] == "--" # Capturing the Pawn
+
+        # Update EnPassant Possible Variable
+        if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
+            self.enPassantPossible = ((move.startRow + move.endRow)//2, (move.startCol + move.endCol)//2)
+        else:
+            self.enPassantPossible = ()
+
     def undoMove(self):
         move = self.moveLog.pop()
         self.board[move.startRow][move.startCol] = move.pieceMoved
@@ -52,11 +67,20 @@ class GameState():
             self.whiteKingLoc = (move.startRow, move.startCol)
         if move.pieceMoved == "bK":
             self.blackKingLoc = (move.startRow, move.startCol)
+        # Undo EnPassant
+        if move.isEnPassantMove:
+            self.board[move.endRow][move.endCol] = "--"
+            self.board[move.startRow][move.startCol] = move.pieceCaptured
+            self.enPassantPossible = (move.endRow, move.endCol)
+        # Undo 2 Pawn Advance
+        if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
+            self.enPassantPossible = ()
 
     '''
     All moves considering checks
     '''
     def getValidMoves(self):
+        tempEnPassantPossible = self.enPassantPossible
         moves = self.getAllPossibleMoves()
         for i in range(len(moves)-1, -1, -1): # Iterate backwards to prevent bugs
             self.makeMove(moves[i])
@@ -116,9 +140,13 @@ class GameState():
             if c-1 >= 0:
                 if self.board[r-1][c-1][0] == "b":
                     moves.append(Move((r,c), (r-1,c-1), self.board))
+                elif (r-1,c-1) == self.enPassantPossible:
+                    moves.append(Move((r,c), (r-1,c-1), self.board, isEnPassantMove=True))
             if c+1 <= 7:
                 if self.board[r-1][c+1][0] == "b":
                     moves.append(Move((r,c), (r-1,c+1), self.board))
+                elif (r-1,c+1) == self.enPassantPossible:
+                    moves.append(Move((r,c), (r-1,c+1), self.board, isEnPassantMove=True))
 
         if not self.whitetoMove:
             if self.board[r+1][c] == "--":
@@ -128,9 +156,13 @@ class GameState():
             if c-1 >= 0:
                 if self.board[r+1][c-1][0] == "w":
                     moves.append(Move((r,c), (r+1,c-1), self.board))
+                elif (r+1,c-1) == self.enPassantPossible:
+                    moves.append(Move((r,c), (r+1,c-1), self.board, isEnPassantMove=True))
             if c+1 <= 7:
                 if self.board[r+1][c+1][0] == "w":
                     moves.append(Move((r,c), (r+1,c+1), self.board))
+                elif (r+1,c+1) == self.enPassantPossible:
+                    moves.append(Move((r,c), (r+1,c+1), self.board, isEnPassantMove=True))
     '''
     Used to get all ROOK moves.
     '''
@@ -217,7 +249,7 @@ class Move():
                     "e": 4, "f": 5, "g": 6, "h": 7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
 
-    def __init__(self, startSq, endSq, board):
+    def __init__(self, startSq, endSq, board, isEnPassantMove):
         # Setting values for ease of use
         self.startRow = startSq[0]
         self.startCol = startSq[1]
@@ -225,6 +257,11 @@ class Move():
         self.endCol = endSq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
+
+        self.isPawnPromotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 7)
+
+        self.isEnPassantMove = isEnPassantMove
+
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         print(self.moveID)
 
