@@ -99,6 +99,7 @@ class GameState():
             self.checkMate = False
             self.staleMate = False
 
+        tempEnPassantPossible = self.enPassantPossible
         return moves
     
     def inCheck(self):
@@ -264,6 +265,13 @@ class Move():
 
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         print(self.moveID)
+
+        self.isEnpassantMove = isEnPassantMove
+        if self.isEnpassantMove:
+             if self.pieceMoved == "bP":
+                    self.pieceCaptured = "wP"    
+             else:
+                    self.pieceCaptured = "bP"
 
     '''
     Overriding the equals method
