@@ -50,7 +50,7 @@ class GameState():
 
         # EnPassant Move
         if move.isEnpassantMove:
-            self.board[move.startRow][move.startCol] = "--" # Capturing the Pawn
+            self.board[move.startRow][move.endCol] = "--" # Capturing the Pawn
 
         # Update EnPassant Possible Variable
         if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
@@ -115,6 +115,7 @@ class GameState():
         for move in oppMoves:
             if move.endRow == r and move.endCol == c:
                 return True
+        return False
 
     '''
     All moves without considering checks
@@ -261,15 +262,17 @@ class Move():
 
         self.isPawnPromotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 7)
 
+        self.isEnPassantMove = enpassantMove
+
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         print(self.moveID)
 
         self.isEnpassantMove = enpassantMove
         if self.isEnpassantMove:
-             if self.pieceMoved == "bP":
-                    self.pieceCaptured = "wP"    
+             if self.pieceMoved == "bp":
+                    self.pieceCaptured = "wp"
              else:
-                    self.pieceCaptured = "bP"
+                    self.pieceCaptured = "bp"
 
     '''
     Overriding the equals method
