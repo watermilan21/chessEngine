@@ -50,7 +50,7 @@ class GameState():
 
         # EnPassant Move
         if move.isEnpassantMove:
-            self.board[move.startRow][move.startCol] == "--" # Capturing the Pawn
+            self.board[move.startRow][move.endCol] == "--" # Capturing the Pawn
 
         # Update EnPassant Possible Variable
         if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
@@ -115,6 +115,7 @@ class GameState():
         for move in oppMoves:
             if move.endRow == r and move.endCol == c:
                 return True
+        return False
 
     '''
     All moves without considering checks
@@ -250,7 +251,7 @@ class Move():
                     "e": 4, "f": 5, "g": 6, "h": 7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
 
-    def __init__(self, startSq, endSq, board, isEnPassantMove):
+    def __init__(self, startSq, endSq, board, isEnPassantMove = False):
         # Setting values for ease of use
         self.startRow = startSq[0]
         self.startCol = startSq[1]
@@ -269,7 +270,7 @@ class Move():
         self.isEnpassantMove = isEnPassantMove
         if self.isEnpassantMove:
              if self.pieceMoved == "bP":
-                    self.pieceCaptured = "wP"    
+                    self.pieceCaptured = "wP"
              else:
                     self.pieceCaptured = "bP"
 
