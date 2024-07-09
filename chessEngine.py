@@ -50,7 +50,7 @@ class GameState():
 
         # EnPassant Move
         if move.isEnpassantMove:
-            self.board[move.startRow][move.endCol] == "--" # Capturing the Pawn
+            self.board[move.startRow][move.startCol] = "--" # Capturing the Pawn
 
         # Update EnPassant Possible Variable
         if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
@@ -115,7 +115,6 @@ class GameState():
         for move in oppMoves:
             if move.endRow == r and move.endCol == c:
                 return True
-        return False
 
     '''
     All moves without considering checks
@@ -143,12 +142,12 @@ class GameState():
                 if self.board[r-1][c-1][0] == "b":
                     moves.append(Move((r,c), (r-1,c-1), self.board))
                 elif (r-1,c-1) == self.enPassantPossible:
-                    moves.append(Move((r,c), (r-1,c-1), self.board, isEnPassantMove=True))
+                    moves.append(Move((r,c), (r-1,c-1), self.board, enpassantMove=True))
             if c+1 <= 7:
                 if self.board[r-1][c+1][0] == "b":
                     moves.append(Move((r,c), (r-1,c+1), self.board))
                 elif (r-1,c+1) == self.enPassantPossible:
-                    moves.append(Move((r,c), (r-1,c+1), self.board, isEnPassantMove=True))
+                    moves.append(Move((r,c), (r-1,c+1), self.board, enpassantMove=True))
 
         if not self.whitetoMove:
             if self.board[r+1][c] == "--":
@@ -159,12 +158,12 @@ class GameState():
                 if self.board[r+1][c-1][0] == "w":
                     moves.append(Move((r,c), (r+1,c-1), self.board))
                 elif (r+1,c-1) == self.enPassantPossible:
-                    moves.append(Move((r,c), (r+1,c-1), self.board, isEnPassantMove=True))
+                    moves.append(Move((r,c), (r+1,c-1), self.board, enpassantMove=True))
             if c+1 <= 7:
                 if self.board[r+1][c+1][0] == "w":
                     moves.append(Move((r,c), (r+1,c+1), self.board))
                 elif (r+1,c+1) == self.enPassantPossible:
-                    moves.append(Move((r,c), (r+1,c+1), self.board, isEnPassantMove=True))
+                    moves.append(Move((r,c), (r+1,c+1), self.board, enpassantMove=True))
     '''
     Used to get all ROOK moves.
     '''
@@ -251,7 +250,7 @@ class Move():
                     "e": 4, "f": 5, "g": 6, "h": 7}
     colsToFiles = {v: k for k, v in filesToCols.items()}
 
-    def __init__(self, startSq, endSq, board, isEnPassantMove = False):
+    def __init__(self, startSq, endSq, board, enpassantMove = False):
         # Setting values for ease of use
         self.startRow = startSq[0]
         self.startCol = startSq[1]
@@ -262,15 +261,13 @@ class Move():
 
         self.isPawnPromotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 7)
 
-        self.isEnPassantMove = isEnPassantMove
-
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         print(self.moveID)
 
-        self.isEnpassantMove = isEnPassantMove
+        self.isEnpassantMove = enpassantMove
         if self.isEnpassantMove:
              if self.pieceMoved == "bP":
-                    self.pieceCaptured = "wP"
+                    self.pieceCaptured = "wP"    
              else:
                     self.pieceCaptured = "bP"
 
