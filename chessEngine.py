@@ -54,7 +54,7 @@ class GameState():
 
         # Update EnPassant Possible Variable
         if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
-            self.enPassantPossible = ((move.startRow + move.endRow)//2, (move.startCol + move.endCol)//2)
+            self.enPassantPossible = ((move.startRow + move.endRow)//2, move.startCol)
         else:
             self.enPassantPossible = ()
 
@@ -70,7 +70,7 @@ class GameState():
         # Undo EnPassant
         if move.isEnPassantMove:
             self.board[move.endRow][move.endCol] = "--"
-            self.board[move.startRow][move.startCol] = move.pieceCaptured
+            self.board[move.startRow][move.endCol] = move.pieceCaptured
             self.enPassantPossible = (move.endRow, move.endCol)
         # Undo 2 Pawn Advance
         if move.pieceMoved[1] == "p" and abs(move.startRow - move.endRow) == 2:
